@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whizzard | EV Fleet Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        body{font-family:'Inter',sans-serif;background-color:#f0f2f5;font-size:14px}.main-layout{display:flex;min-height:100vh}.sidebar{width:250px;background-color:#000;color:#e5e7eb;display:flex;flex-direction:column;padding:1.25rem}.sidebar-header{display:flex;align-items:center;gap:.75rem;padding-bottom:1.25rem;border-bottom:1px solid #374151}.sidebar-nav .tab-button{display:flex;align-items:center;width:100%;padding:.65rem 1rem;border-radius:8px;font-weight:500;color:#d1d5db;transition:all .2s ease;gap:.75rem}.sidebar-nav .tab-button:hover{background-color:#374151;color:#fff}.sidebar-nav .tab-button.active{background-color:#dc2626;color:#fff;font-weight:600}.main-content{flex-grow:1;display:flex;flex-direction:column;width:calc(100vw - 250px)}.content-header{background-color:#fff;padding:.75rem 1.5rem;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}.content-area{padding:1.25rem;overflow-y:auto}h2{font-size:1.25rem}h3{font-size:1.1rem}.tab-content,.sub-tab-content{display:none}.tab-content.active,.sub-tab-content.active{display:block;animation:contentFadeIn .3s ease-in-out}@keyframes contentFadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.sub-tab-button.active{background-color:#dc2626;color:#fff;font-weight:600;box-shadow:0 4px 6px -1px rgba(220,38,38,.2),0 2px 4px -1px rgba(220,38,38,.12)}th,td{padding:.5rem .75rem}th{background-color:#f8fafc;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.05em;font-size:.75rem}tbody tr:hover{background-color:#fef2f2}.btn{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;padding:.5rem 1rem;border-radius:8px;transition:all .3s ease;box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.06);font-size:.875rem}.btn:hover{transform:translateY(-2px);box-shadow:0 4px 10px 0 rgba(0,0,0,.1)}.btn:disabled{background-color:#9ca3af;cursor:not-allowed;transform:none;box-shadow:none}.btn-primary{background-color:#dc2626;color:#fff}.btn-primary:hover:not(:disabled){background-color:#b91c1c}.btn-secondary{background-color:#475569;color:#fff}.btn-secondary:hover:not(:disabled){background-color:#334155}.btn-purple{background-color:#7c3aed;color:#fff}.btn-purple:hover:not(:disabled){background-color:#6d28d9}.btn-green{background-color:#16a34a;color:#fff}.btn-green:hover:not(:disabled){background-color:#15803d}.btn-red{background-color:#dc2626;color:#fff}.btn-red:hover:not(:disabled){background-color:#b91c1c}.btn-blue{background-color:#3b82f6;color:#fff}.btn-blue:hover:not(:disabled){background-color:#2563eb}.form-input,textarea.form-input{border-radius:8px;border:1px solid #d1d5db;transition:all .3s ease;padding:.5rem .75rem;font-size:.875rem}.form-input:focus,.select2-container--default.select2-container--focus .select2-selection--multiple{--tw-ring-color:#dc2626;border-color:#dc2626!important;box-shadow:0 0 0 2px rgba(220,38,38,.2)}.select2-container .select2-selection--multiple{min-height:38px;border-radius:8px;border-color:#d1d5db}.select2-container .select2-search--inline .select2-search__field{margin-top:.5rem}.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:1000;opacity:0;visibility:hidden;transition:all .3s ease-in-out}.modal-overlay.active{opacity:1;visibility:visible}.modal-container{background:#fff;padding:1.5rem;border-radius:16px;width:90%;max-width:700px;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:all .3s ease-in-out}.modal-overlay.active .modal-container{transform:scale(1)}#statusModal .modal-container,#verificationActionModal .modal-container,#rejectionReasonModal .modal-container,#passwordModal .modal-container{max-width:450px}.select2-container{z-index:1050}
+    </style>
+</head>
+<body>
+    <div id="loginPage" class="flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+            <div class="text-center">
+                <img src="https://whizzard.in/images/logo.png" alt="Whizzard Logo" class="mx-auto h-20 w-auto"> 
+                <h2 class="mt-6 text-2xl font-bold text-gray-900">Sign in to your account</h2>
+                <p class="text-gray-600">EV Fleet Management System</p>
+            </div>
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="loginMobile" class="text-sm font-medium text-gray-700">Mobile Number</label>
+                    <input id="loginMobile" name="loginMobile" type="tel" required class="form-input w-full mt-1" placeholder="Enter your mobile number">
+                </div>
+                <div>
+                    <label for="loginPassword" class="text-sm font-medium text-gray-700">Password</label>
+                    <input id="loginPassword" name="loginPassword" type="password" required class="form-input w-full mt-1" placeholder="Enter your password">
+                </div>
+                <p id="loginError" class="text-sm text-red-600 hidden"></p>
+                <div>
+                    <button type="submit" class="w-full btn btn-primary">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Sign In</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard" class="main-layout hidden">
+        <aside class="sidebar">
+            <div class="sidebar-header"><i class="fa-solid fa-truck-fast fa-2x text-red-500"></i><h1 class="text-lg font-bold tracking-tight">Whizzard</h1></div>
+            <nav class="sidebar-nav mt-6 flex flex-col gap-2">
+                <button class="tab-button active" onclick="openTab(event, 'summary')"><i class="fa-solid fa-chart-pie fa-fw"></i><span>Summary</span></button>
+                <button class="tab-button" onclick="openTab(event, 'vehicles')"><i class="fa-solid fa-truck-fast fa-fw"></i><span>Vehicles</span></button>
+                <button class="tab-button" onclick="openTab(event, 'site-codes')"><i class="fa-solid fa-map-location-dot fa-fw"></i><span>Site Codes</span></button>
+                <button class="tab-button" onclick="openTab(event, 'charging-points')"><i class="fa-solid fa-charging-station fa-fw"></i><span>Charging Points</span></button>
+                <button class="tab-button" onclick="openTab(event, 'users')"><i class="fa-solid fa-users fa-fw"></i><span>Users</span></button>
+                <button class="tab-button" onclick="openTab(event, 'verification')"><i class="fa-solid fa-check-to-slot fa-fw"></i><span>Verification</span></button>
+                <button class="tab-button" onclick="openTab(event, 'mis')"><i class="fa-solid fa-file-invoice fa-fw"></i><span>MIS</span></button>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="content-header">
+                <p class="text-sm text-gray-600">Logged in as: <span id="loggedInUserName" class="font-semibold text-gray-800"></span> (<span id="loggedInUserRole" class="font-semibold text-gray-800"></span>)</p>
+                <button id="logoutButton" class="btn btn-secondary"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </header>
+            <main class="content-area">
+                <!-- All tab content from original file goes here -->
+                <div id="summary" class="tab-content active">
+                    <h2 class="font-bold text-gray-800 mb-4">Fleet At a Glance</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
+                        <div class="bg-red-50 border-l-4 border-red-500 rounded-r-lg p-3 shadow-sm"><div class="flex items-center"><div class="p-3 rounded-full bg-red-100 text-red-600"><i class="fa-solid fa-clock fa-lg"></i></div><div class="ml-3"><p class="text-xs font-medium text-gray-500">Pending Vehicles</p><p id="pendingVehiclesStat" class="text-xl font-bold text-gray-800">0</p></div></div></div>
+                        <div class="bg-green-50 border-l-4 border-green-500 rounded-r-lg p-3 shadow-sm"><div class="flex items-center"><div class="p-3 rounded-full bg-green-100 text-green-600"><i class="fa-solid fa-circle-check fa-lg"></i></div><div class="ml-3"><p class="text-xs font-medium text-gray-500">Active Vehicles</p><p id="strictlyActiveVehiclesStat" class="text-xl font-bold text-gray-800">0</p></div></div></div>
+                        <div class="bg-orange-50 border-l-4 border-orange-500 rounded-r-lg p-3 shadow-sm"><div class="flex items-center"><div class="p-3 rounded-full bg-orange-100 text-orange-600"><i class="fa-solid fa-triangle-exclamation fa-lg"></i></div><div class="ml-3"><p class="text-xs font-medium text-gray-500">Breakdown</p><p id="breakdownVehiclesStat" class="text-xl font-bold text-gray-800">0</p></div></div></div>
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-r-lg p-3 shadow-sm"><div class="flex items-center"><div class="p-3 rounded-full bg-yellow-100 text-yellow-600"><i class="fa-solid fa-pause-circle fa-lg"></i></div><div class="ml-3"><p class="text-xs font-medium text-gray-500">Un-Utilised</p><p id="unutilisedVehiclesStat" class="text-xl font-bold text-gray-800">0</p></div></div></div>
+                        <div class="bg-red-50 border-l-4 border-red-500 rounded-r-lg p-3 shadow-sm"><div class="flex items-center"><div class="p-3 rounded-full bg-red-100 text-red-600"><i class="fa-solid fa-circle-xmark fa-lg"></i></div><div class="ml-3"><p class="text-xs font-medium text-gray-500">Disabled Vehicles</p><p id="disabledVehiclesStat" class="text-xl font-bold text-gray-800">0</p></div></div></div>
+                        <div class="bg-indigo-50 border-l-4 border-indigo-500 rounded-r-lg p-3 shadow-sm"><div class="flex items-center"><div class="p-3 rounded-full bg-indigo-100 text-indigo-600"><i class="fa-solid fa-map-location-dot fa-lg"></i></div><div class="ml-3"><p class="text-xs font-medium text-gray-500">Active Sites</p><p id="activeSitesStat" class="text-xl font-bold text-gray-800">0</p></div></div></div>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-3 shadow-sm"><div class="flex items-center"><div class="p-3 rounded-full bg-blue-100 text-blue-600"><i class="fa-solid fa-file-invoice-dollar fa-lg"></i></div><div class="ml-3"><p class="text-xs font-medium text-gray-500">Cost Expected</p><p id="costExpectedStat" class="text-xl font-bold text-gray-800">0</p></div></div></div>
+                        <div class="bg-teal-50 border-l-4 border-teal-500 rounded-r-lg p-3 shadow-sm"><div class="flex items-center"><div class="p-3 rounded-full bg-teal-100 text-teal-600"><i class="fa-solid fa-hand-holding-dollar fa-lg"></i></div><div class="ml-3"><p class="text-xs font-medium text-gray-500">Cost Booked</p><p id="costBookedStat" class="text-xl font-bold text-gray-800">0</p></div></div></div>
+                    </div>
+                     <div class="mt-6 bg-white p-5 rounded-lg shadow-md">
+                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-gray-800">Vehicle Distribution by OM</h3><button onclick="exportOMDistribution()" class="btn btn-secondary"><i class="fa-solid fa-file-excel"></i>Export</button></div>
+                        <div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th class="p-3 text-left">OM Name</th><th class="p-3 text-center">Site Count</th><th class="p-3 text-center">Vehicle Count</th></tr></thead><tbody id="omVehicleCountBody" class="divide-y divide-gray-200"></tbody></table></div>
+                    </div>
+                </div>
+
+                <div id="vehicles" class="tab-content">
+                    <!-- Vehicles content -->
+                </div>
+
+                <div id="site-codes" class="tab-content">
+                    <!-- Site Codes content -->
+                </div>
+
+                <div id="charging-points" class="tab-content">
+                    <!-- Charging Points content -->
+                </div>
+
+                <div id="users" class="tab-content">
+                    <!-- Users content -->
+                </div>
+
+                <div id="verification" class="tab-content">
+                    <!-- Verification content -->
+                </div>
+
+                <div id="mis" class="tab-content">
+                    <!-- MIS content -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- All modals from original file go here -->
+    <div id="editModal" class="modal-overlay"><div class="modal-container">...</div></div>
+    <div id="passwordModal" class="modal-overlay"><div class="modal-container">...</div></div>
+    <div id="statusModal" class="modal-overlay"><div class="modal-container">...</div></div>
+    <div id="verificationActionModal" class="modal-overlay"><div class="modal-container">...</div></div>
+    <div id="rejectionReasonModal" class="modal-overlay"><div class="modal-container">...</div></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        const API_BASE_URL = '/api';
+        const loginPage = document.getElementById('loginPage');
+        const dashboardPage = document.getElementById('dashboard');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const loggedInUserName = document.getElementById('loggedInUserName');
+        const loggedInUserRole = document.getElementById('loggedInUserRole');
+        const logoutButton = document.getElementById('logoutButton');
+
+        let currentUser = null;
+        let allData = null;
+
+        // --- Helper: API Request ---
+        async function apiRequest(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+            };
+            if (body) options.body = JSON.stringify(body);
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            if (!response.ok) {
+                let errorData = {};
+                try { errorData = await response.json(); } catch {}
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        }
+
+        // --- Login Logic ---
+        loginForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            loginError.classList.add('hidden');
+            const mobile = document.getElementById('loginMobile').value;
+            const password = document.getElementById('loginPassword').value;
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.querySelector('span').textContent = 'Signing In...';
+            try {
+                const data = await apiRequest('/login', 'POST', { mobile, password });
+                currentUser = data.user;
+                // Only allow admins
+                const allowedRoles = ['Admin', 'System Admin', 'Super Admin'];
+                if (!allowedRoles.includes(currentUser.userRole)) {
+                    throw new Error('Access denied. Only admins can access this dashboard.');
+                }
+                // Fetch all data for dashboard
+                await fetchAllData();
+                showDashboard();
+            } catch (err) {
+                loginError.textContent = err.message;
+                loginError.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.querySelector('span').textContent = 'Sign In';
+            }
+        });
+
+        async function fetchAllData() {
+            // You must implement /api/data in your backend for this to work
+            // For now, just try to fetch and show error if not implemented
+            try {
+                allData = await apiRequest('/data');
+                // TODO: Populate dashboard tabs with allData
+            } catch (err) {
+                alert('Failed to fetch dashboard data: ' + err.message);
+            }
+        }
+
+        function showDashboard() {
+            loginPage.classList.add('hidden');
+            dashboardPage.classList.remove('hidden');
+            loggedInUserName.textContent = currentUser.userName;
+            loggedInUserRole.textContent = currentUser.userRole;
+        }
+
+        // --- Logout ---
+        logoutButton.addEventListener('click', function() {
+            currentUser = null;
+            allData = null;
+            dashboardPage.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+            loginForm.reset();
+        });
+
+        // --- Tab Switching ---
+        window.openTab = function(event, tabId) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        };
+    </script>
+</body>
+</html>

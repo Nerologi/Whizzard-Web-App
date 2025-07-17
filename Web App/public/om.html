@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whizzard - OM Verification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: #f1f5f9;
+            color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 2rem;
+            background-color: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            border-radius: 12px;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header img { width: 150px; margin-bottom: 0.5rem; }
+        .header h2 { font-size: 1.25rem; color: #475569; margin: 0; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem; color: #334152; }
+        input[type="tel"], input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus { border-color: #dc2626; box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2); outline: none; }
+
+        .btn {
+            display: block; width: 100%; padding: 0.8rem; border: none; border-radius: 8px;
+            background-color: #dc2626; color: white; font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: background-color 0.3s;
+        }
+        .btn:hover { background-color: #b91c1c; }
+        .btn:disabled { background-color: #9ca3af; cursor: not-allowed; }
+
+        #error-message { color: #dc2626; text-align: center; margin-top: 1rem; display: none; font-weight: 500; }
+
+        #site-list { list-style: none; padding: 0; }
+        .site-item {
+            background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; margin-bottom: 0.75rem;
+            border-radius: 8px; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+        }
+        .site-item:hover { background-color: #f1f5f9; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transform: translateY(-2px); }
+        .site-item h3 { margin: 0 0 0.5rem 0; color: #0f172a; }
+        .site-stats { font-size: 0.8rem; color: #64748b; display: flex; gap: 1rem; }
+        .site-stats span { font-weight: 600; }
+        .stat-pending { color: #f59e0b; }
+        .stat-verified { color: #16a34a; }
+        .stat-rejected { color: #ef4444; }
+
+        #trip-card { padding: 1.5rem; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #f8fafc; }
+        .trip-details p { margin: 0.75rem 0; font-size: 0.95rem; }
+        .trip-details strong { display: inline-block; width: 130px; color: #475569; }
+        #action-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
+
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background-color: #fff; padding: 1.5rem; border: 1px solid #888;
+            width: 90%; max-width: 380px; border-radius: 12px; text-align: center;
+        }
+        .modal-buttons { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+        textarea {
+            width: 100%; padding: 0.5rem; margin-top: 1rem; border: 1px solid #cbd5e1;
+            border-radius: 8px; min-height: 80px; box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Login Page -->
+        <div id="login-page" class="page active">
+            <div class="header">
+                <img src="https://whizzard.in/images/logo.png" alt="Whizzard Logo">
+                <h2>EV Fleet Management</h2>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel" id="mobile" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" id="login-btn" class="btn">Login</button>
+            </form>
+            <p id="error-message"></p>
+        </div>
+
+        <!-- Site Selection Page -->
+        <div id="site-selection-page" class="page">
+            <div class="header">
+                <h2 id="welcome-om"></h2>
+            </div>
+            <ul id="site-list"></ul>
+        </div>
+
+        <!-- Trip Verification Page -->
+        <div id="trip-verification-page" class="page">
+             <div class="header">
+                <h2 id="trip-site-code"></h2>
+            </div>
+            <div id="trip-card" style="display: none;"></div>
+            <div id="no-trips-message" style="text-align: center; padding: 2rem; display: none;">
+                <p>All pending trips for this site have been verified!</p>
+                <button id="back-to-sites" class="btn">Back to Sites</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="verify-modal" class="modal">
+        <div class="modal-content">
+            <h3>Verify Trip Status</h3>
+            <div class="modal-buttons">
+                <button class="btn" onclick="submitVerification('Running')">Running</button>
+                <button class="btn" onclick="submitVerification('Unutilised')">Un-Utilised</button>
+            </div>
+        </div>
+    </div>
+    <div id="reject-modal" class="modal">
+        <div class="modal-content">
+            <h3>Reject Trip</h3>
+            <div id="reject-initial-buttons" class="modal-buttons">
+                <button class="btn" onclick="submitRejection('Breakdown')">Breakdown</button>
+                <button class="btn" onclick="handleNotBreakdown()">Not Breakdown</button>
+            </div>
+            <div id="reason-section" style="display: none;">
+                <textarea id="rejection-reason" placeholder="Please provide a reason for rejection..."></textarea>
+                <button class="btn" onclick="submitNotBreakdownReason()">Submit Reason</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api'; // Use relative path to the same domain
+
+        // State Management
+        let currentUser = null;
+        let allSites = [];
+        let allTrips = [];
+        let pendingTripsForSite = [];
+        let currentTripIndex = 0;
+
+        // DOM Elements
+        const pages = {
+            login: document.getElementById('login-page'),
+            siteSelection: document.getElementById('site-selection-page'),
+            tripVerification: document.getElementById('trip-verification-page'),
+        };
+        const errorMessage = document.getElementById('error-message');
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const welcomeOM = document.getElementById('welcome-om');
+        const siteList = document.getElementById('site-list');
+        const tripSiteCode = document.getElementById('trip-site-code');
+        const tripCard = document.getElementById('trip-card');
+        const noTripsMessage = document.getElementById('no-trips-message');
+        const verifyModal = document.getElementById('verify-modal');
+        const rejectModal = document.getElementById('reject-modal');
+        const rejectInitialButtons = document.getElementById('reject-initial-buttons');
+        const reasonSection = document.getElementById('reason-section');
+
+        // --- Helper Functions ---
+        function showPage(pageName) {
+            Object.values(pages).forEach(page => page.classList.remove('active'));
+            pages[pageName].classList.add('active');
+        }
+
+        async function apiRequest(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+            };
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        }
+
+        // --- Login Logic ---
+        async function handleLogin(event) {
+            event.preventDefault();
+            const mobile = document.getElementById('mobile').value;
+            const password = document.getElementById('password').value;
+
+            errorMessage.style.display = 'none';
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+
+            try {
+                const data = await apiRequest('/login', 'POST', { mobile, password });
+                currentUser = data.user;
+
+                // Ensure user is an OM or RM
+                if (!['Operation Manager', 'Regional Manager'].includes(currentUser.userRole)) {
+                    throw new Error('Access denied. This portal is for managers only.');
+                }
+
+                // Hide login, show site selection
+                pages.login.classList.remove('active');
+                pages.siteSelection.classList.add('active');
+                await fetchOMData();
+
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        }
+
+        // --- Data Fetching ---
+        async function fetchOMData() {
+             try {
+                const data = await apiRequest(`/om-data?omMobile=${currentUser.userMobile}`);
+                allSites = data.sites;
+                allTrips = data.trips;
+                displaySiteSelection();
+            } catch (error) {
+                 errorMessage.textContent = 'Failed to load your data. Please try again.';
+                 errorMessage.style.display = 'block';
+            }
+        }
+
+        // --- Site Selection Logic ---
+        function displaySiteSelection() {
+            welcomeOM.textContent = `Welcome, ${currentUser.userName}!`;
+            siteList.innerHTML = '';
+
+            allSites.forEach(site => {
+                const tripsForSite = allTrips.filter(t => t.siteCode === site.siteCodeInput);
+                const pendingCount = tripsForSite.filter(t => t.status === 'Pending').length;
+                const verifiedCount = tripsForSite.filter(t => ['Running', 'Unutilised'].includes(t.status)).length;
+                const rejectedCount = tripsForSite.filter(t => ['Rejected', 'Breakdown'].includes(t.status)).length;
+
+                const listItem = document.createElement('li');
+                listItem.className = 'site-item';
+                listItem.innerHTML = `
+                    <h3>${site.clientName} (${site.siteCodeInput})</h3>
+                    <div class="site-stats">
+                        <span class="stat-pending">Pending: ${pendingCount}</span>
+                        <span class="stat-verified">Verified: ${verifiedCount}</span>
+                        <span class="stat-rejected">Rejected: ${rejectedCount}</span>
+                    </div>
+                `;
+                listItem.onclick = () => startVerification(site.siteCodeInput);
+                siteList.appendChild(listItem);
+            });
+            showPage('siteSelection');
+
+            // Add logout button if not present
+            if (!document.getElementById('logout-btn')) {
+                const logoutBtn = document.createElement('button');
+                logoutBtn.id = 'logout-btn';
+                logoutBtn.className = 'btn';
+                logoutBtn.style.margin = '1.5rem auto 0 auto';
+                logoutBtn.textContent = 'Logout';
+                logoutBtn.onclick = handleLogout;
+                pages.siteSelection.appendChild(logoutBtn);
+            }
+        }
+
+        // --- Trip Verification Logic ---
+        function startVerification(siteCode) {
+            pendingTripsForSite = allTrips.filter(trip => trip.siteCode === siteCode && trip.status === 'Pending');
+            currentTripIndex = 0;
+            const site = allSites.find(s => s.siteCodeInput === siteCode);
+            tripSiteCode.textContent = `Verifying for ${site.clientName}`;
+            displayNextTrip();
+            showPage('tripVerification');
+        }
+
+        function displayNextTrip() {
+            if (currentTripIndex < pendingTripsForSite.length) {
+                const trip = pendingTripsForSite[currentTripIndex];
+                
+                // Calculate per day rent
+                const daysInMonth = new Date(new Date(trip.date).getFullYear(), new Date(trip.date).getMonth() + 1, 0).getDate();
+                const vehicle = { vehicleRent: 15000 }; // This should come from a vehicle lookup
+                const perDayCost = vehicle.vehicleRent ? (vehicle.vehicleRent / daysInMonth) : 0;
+                
+                const site = allSites.find(s => s.siteCodeInput === trip.siteCode);
+
+                tripCard.innerHTML = `
+                    <div class="trip-details">
+                        <p><strong>Vehicle Number:</strong> ${trip.vehicleNo}</p>
+                        <p><strong>Per Day Cost:</strong> ₹${perDayCost.toFixed(2)}</p>
+                        <p><strong>Site Code:</strong> ${trip.siteCode}</p>
+                        <p><strong>Client:</strong> ${trip.clientName}</p>
+                        <p><strong>Location:</strong> ${site.cityName}, ${site.state}</p>
+                        <p><strong>Date:</strong> ${trip.date}</p>
+                    </div>
+                    <div id="action-buttons">
+                        <button class="btn" onclick="openVerifyModal()">Verify</button>
+                        <button class="btn" onclick="openRejectModal()">Reject</button>
+                    </div>
+                `;
+                tripCard.style.display = 'block';
+                noTripsMessage.style.display = 'none';
+            } else {
+                tripCard.style.display = 'none';
+                noTripsMessage.style.display = 'block';
+            }
+        }
+        
+        async function updateTripAndProceed(status, reason = null) {
+            const trip = pendingTripsForSite[currentTripIndex];
+            const payload = {
+                status: status,
+                verifiedBy: currentUser.userName
+            };
+            if(reason) {
+                payload.rejectionReason = reason;
+            }
+            
+            try {
+                await apiRequest(`/trips/${trip._id}`, 'PUT', payload);
+                // Update local data to reflect change for the site stats page
+                const globalTrip = allTrips.find(t => t._id === trip._id);
+                if(globalTrip) globalTrip.status = status;
+
+                currentTripIndex++;
+                displayNextTrip();
+
+            } catch (error) {
+                alert('Failed to update trip. Please try again.');
+                console.error(error);
+            }
+        }
+
+        // --- Modal Logic ---
+        function openVerifyModal() { verifyModal.style.display = 'flex'; }
+        function openRejectModal() {
+            rejectInitialButtons.style.display = 'flex';
+            reasonSection.style.display = 'none';
+            rejectModal.style.display = 'flex';
+        }
+        function closeModal() {
+            verifyModal.style.display = 'none';
+            rejectModal.style.display = 'none';
+        }
+
+        function submitVerification(status) {
+            closeModal();
+            updateTripAndProceed(status);
+        }
+
+        function submitRejection(reason) {
+            closeModal();
+            updateTripAndProceed(reason);
+        }
+
+        function handleNotBreakdown() {
+            rejectInitialButtons.style.display = 'none';
+            reasonSection.style.display = 'block';
+        }
+        
+        function submitNotBreakdownReason() {
+            const reasonInput = document.getElementById('rejection-reason');
+            if (reasonInput.value.trim() === '') {
+                alert('Please enter a reason.');
+                return;
+            }
+            closeModal();
+            updateTripAndProceed('Rejected', reasonInput.value);
+            reasonInput.value = '';
+        }
+
+        // --- Logout Logic ---
+        function handleLogout() {
+            // Reset all state and go back to login
+            currentUser = null;
+            allSites = [];
+            allTrips = [];
+            pendingTripsForSite = [];
+            currentTripIndex = 0;
+            // Hide all pages, show login
+            Object.values(pages).forEach(page => page.classList.remove('active'));
+            pages.login.classList.add('active');
+            // Reset login form
+            loginForm.reset();
+            errorMessage.style.display = 'none';
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Login';
+            // Remove logout button if present
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) logoutBtn.remove();
+        }
+
+        // --- Event Listeners ---
+        loginForm.addEventListener('submit', handleLogin);
+        document.getElementById('back-to-sites').addEventListener('click', displaySiteSelection);
+
+        window.onclick = function(event) {
+            if (event.target == verifyModal || event.target == rejectModal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

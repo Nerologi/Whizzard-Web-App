@@ -1,0 +1,16 @@
+{
+  "name": "whizzard-ev-fleet-app",
+  "version": "1.0.0",
+  "description": "Whizzard EV Fleet Management System",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "mongoose": "^6.10.0"
+  }
+}
